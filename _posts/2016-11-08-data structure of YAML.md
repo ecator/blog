@@ -169,6 +169,7 @@ s3: |-
 e: !!str 123
 f: !!str true
 ```
+
 # 引用
 
 锚点&和别名\*，可以用来引用
@@ -206,6 +207,7 @@ test:
 &用来建立锚点（defaults），<<表示合并到当前数据，*用来引用锚点。
 
 下面是另一个例子:
+
 ```
 - &showell Steve 
 - Clark 
@@ -214,6 +216,7 @@ test:
 - *showell 
 ```
 转为 JavaScript 代码如下:
+
 ```
 [ 'Steve', 'Clark', 'Brian', 'Oren', 'Steve' ]
 ```
