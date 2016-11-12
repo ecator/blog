@@ -15,6 +15,7 @@ key: value
 ```
 hash: { name: Steve, foo: bar } 
 ```
+
 # 数组
 以 \- 开头的词构成一个数组
 
@@ -54,24 +55,30 @@ websites:
  Python: python.org 
  Perl: use.perl.org 
 ```
+
 # 纯量
+
 ## 数字
 
 ```
 number: 12.30
 ```
+
 ## 布尔值
 
 ```
 key1: true
 key2: false
 ```
+
 ## null
 
 ```
 parent: ~ 
 ```
+
 ## 时间
+
 > 时间采用 ISO8601 格式
 
 ```
@@ -84,6 +91,7 @@ date: 1976-07-31
 ```
 
 ## 字符串
+
 字符串默认不用引号
 
 ```
@@ -162,6 +170,7 @@ e: !!str 123
 f: !!str true
 ```
 # 引用
+
 锚点&和别名\*，可以用来引用
 
 ```
