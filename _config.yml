@@ -17,6 +17,7 @@ github_username:  ecator
 exclude: 
  - README.md
  - LICENSE
+ - CNAME
 # Build settings
 markdown: kramdown
 kramdown:
