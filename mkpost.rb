@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 puts "jekyll自动生成posts模板脚本 by 易小猫"
 puts "输入文件名（要求英文）"
 filename=gets.chomp
