@@ -4,57 +4,236 @@ import HeaderLink from "./HeaderLink.astro";
 import SocialLinks from "./SocialLinks.astro";
 ---
 
-<header>
-	<nav>
-		<h2>
-			<a href="/">{SITE_TITLE}</a>
-		</h2>
+<header class="site-header">
+	<div class="electric-top-bar" aria-hidden="true"></div>
+	<nav class="header-nav">
+		<div class="brand-group">
+			<a href="/" class="brand-link">
+				<span class="gekota-avatar" title="呱太 (Gekota) // 常盘台专属徽章">
+					<img src="/favicon.svg" alt="Gekota" width="28" height="28" />
+				</span>
+				<span class="brand-text">
+					<span class="brand-title">{SITE_TITLE}</span>
+					<span class="brand-sub">LV.5 // RAILGUN LAB</span>
+				</span>
+			</a>
+		</div>
+
 		<div class="internal-links">
 			<HeaderLink href="/">Home</HeaderLink>
 			<HeaderLink href="/blog">Blog</HeaderLink>
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
-		<SocialLinks />
+
+		<div class="header-actions">
+			<button
+				id="theme-toggle-btn"
+				class="theme-toggle-btn"
+				type="button"
+				aria-label="切换明暗主题模式"
+				title="切换：超电磁炮 HUD (深色) / 常盘台日常 (浅色)"
+			>
+				<span class="theme-icon theme-icon-dark">⚡</span>
+				<span class="theme-icon theme-icon-light">🏫</span>
+				<span class="theme-label" id="theme-toggle-label">LV.5 HUD</span>
+			</button>
+			<div class="header-social">
+				<SocialLinks />
+			</div>
+		</div>
 	</nav>
 </header>
+
+<script is:inline>
+	(function () {
+		const btn = document.getElementById("theme-toggle-btn");
+		const label = document.getElementById("theme-toggle-label");
+
+		function syncUI(theme) {
+			if (!label) return;
+			label.textContent = theme === "light" ? "常盘台日常" : "电磁 HUD";
+		}
+
+		const current = document.documentElement.getAttribute("data-theme") || "dark";
+		syncUI(current);
+
+		if (btn) {
+			btn.addEventListener("click", () => {
+				const active = document.documentElement.getAttribute("data-theme") || "dark";
+				const next = active === "dark" ? "light" : "dark";
+				document.documentElement.setAttribute("data-theme", next);
+				localStorage.setItem("misaka-theme", next);
+				syncUI(next);
+			});
+		}
+	})();
+</script>
+
 <style>
-	header {
+	.site-header {
+		position: sticky;
+		top: 0;
+		z-index: 80;
 		margin: 0;
-		padding: 0 1em;
-		background: white;
-		box-shadow: 0 2px 8px rgba(var(--black), 5%);
-	}
-	h2 {
-		margin: 0;
-		font-size: 1em;
+		padding: 0 1.25rem;
+		background: var(--bg-glass);
+		backdrop-filter: blur(14px);
+		border-bottom: 1px solid var(--border-hud);
+		box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 	}
 
-	h2 a,
-	h2 a.active {
-		text-decoration: none;
+	.electric-top-bar {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: linear-gradient(
+			90deg,
+			var(--accent),
+			var(--accent-coin),
+			var(--accent-gekota),
+			var(--accent)
+		);
+		background-size: 200% 100%;
+		animation: electricFlow 6s linear infinite;
 	}
-	nav {
+
+	@keyframes electricFlow {
+		0% {
+			background-position: 0% 50%;
+		}
+		100% {
+			background-position: 200% 50%;
+		}
+	}
+
+	.header-nav {
+		max-width: 1080px;
+		margin: 0 auto;
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 0.75rem;
 	}
-	nav a {
-		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
+
+	.brand-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.65rem;
+		padding: 0.55rem 0;
 		text-decoration: none;
+		color: var(--text-primary);
 	}
-	nav a.active {
-		text-decoration: none;
-		border-bottom-color: var(--accent);
+
+	.brand-link:hover .gekota-avatar {
+		transform: rotate(-8deg) scale(1.08);
+		border-color: var(--accent-gekota);
+		box-shadow: 0 0 12px rgba(74, 222, 128, 0.45);
 	}
-	.social-links,
-	.social-links a {
+
+	.gekota-avatar {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 36px;
+		height: 36px;
+		border-radius: 10px;
+		background: var(--accent-gekota-soft);
+		border: 1px solid rgba(74, 222, 128, 0.4);
+		transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.gekota-avatar img {
+		width: 24px;
+		height: 24px;
+		border-radius: 0;
+	}
+
+	.brand-text {
 		display: flex;
+		flex-direction: column;
+		line-height: 1.15;
 	}
+
+	.brand-title {
+		font-size: 1.05rem;
+		font-weight: 700;
+		letter-spacing: 0.02em;
+		color: var(--text-primary);
+	}
+
+	.brand-sub {
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.64rem;
+		letter-spacing: 0.1em;
+		color: var(--accent);
+	}
+
+	.internal-links {
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.theme-toggle-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0.38rem 0.75rem;
+		border-radius: 999px;
+		background: var(--bg-inline-code);
+		border: 1px solid var(--border-hud);
+		color: var(--text-primary);
+		font-family: inherit;
+		font-size: 0.78rem;
+		font-weight: 700;
+		cursor: pointer;
+		transition: all 0.2s ease;
+	}
+
+	.theme-toggle-btn:hover {
+		border-color: var(--accent-coin);
+		box-shadow: var(--glow-coin);
+		color: var(--accent-coin);
+	}
+
+	:global([data-theme="dark"]) .theme-icon-light {
+		display: none;
+	}
+
+	:global([data-theme="light"]) .theme-icon-dark {
+		display: none;
+	}
+
+	.header-social :global(.social-links) {
+		margin-top: 0;
+	}
+
 	@media (max-width: 720px) {
-		.social-links {
+		.site-header {
+			padding: 0 0.65rem;
+		}
+		.brand-sub {
 			display: none;
+		}
+		.brand-title {
+			font-size: 0.92rem;
+		}
+		.header-social {
+			display: none;
+		}
+		.theme-label {
+			display: none;
+		}
+		.theme-toggle-btn {
+			padding: 0.38rem 0.55rem;
 		}
 	}
 </style>

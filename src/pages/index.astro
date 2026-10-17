@@ -1,13 +1,23 @@
 ---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import HomeHeroImage from "../assets/site-home.jpg";
 import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
+import FormattedDate from "../components/FormattedDate.astro";
 import Header from "../components/Header.astro";
-import HomeHeroImage from "../assets/site-home.jpg";
-import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { MISAKA_PROFILE, SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+
+const allPosts = (await getCollection("blog")).sort(
+	(a, b) =>
+		(b.data.updatedDate ?? b.data.pubDate).valueOf() -
+		(a.data.updatedDate ?? a.data.pubDate).valueOf(),
+);
+const recentPosts = allPosts.slice(0, 6);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 	<head>
 		<BaseHead
 			title={SITE_TITLE}
@@ -18,9 +28,586 @@ import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 	<body>
 		<Header />
 		<main>
-			<h1>欢迎来到我的博客</h1>
-			<p>这里会记录我的学习笔记和一些碎碎念</p>
+			<!-- Hero Visual Showcase -->
+			<section class="hero-section hud-card">
+				<div class="hero-hud-bar">
+					<div class="hud-dots">
+						<span class="dot dot-cyan"></span>
+						<span class="dot dot-gold"></span>
+						<span class="dot dot-green"></span>
+						<span class="hud-sys-text"
+							>SYSTEM BOOT: SUCCESS // LEVEL 5 RAILGUN TERMINAL</span
+						>
+					</div>
+					<div class="hud-status-right">
+						<span class="hud-tag">⚡ {MISAKA_PROFILE.rank}</span>
+						<span class="hud-badge-coin">🪙 1030 m/s</span>
+					</div>
+				</div>
+
+				<div class="hero-banner-wrap">
+					<Image
+						src={HomeHeroImage}
+						width={1200}
+						height={675}
+						alt="Misaka's Digital Lab - 御坂美琴主题博客"
+						class="hero-banner-img"
+						loading="eager"
+					/>
+					<div class="hero-corner corner-tl"></div>
+					<div class="hero-corner corner-tr"></div>
+					<div class="hero-corner corner-bl"></div>
+					<div class="hero-corner corner-br"></div>
+				</div>
+
+				<div class="hero-content">
+					<div class="hero-text">
+						<p class="hero-kicker">
+							<span>⚡ TOKIWADAI ELECTROMAGNETIC LAB</span>
+							<span class="kicker-sep">·</span>
+							<span>BLOG.MISAKA.COOL</span>
+						</p>
+						<h1>欢迎来到我的博客</h1>
+						<p class="hero-desc">
+							这里会记录我的学习笔记和一些碎碎念
+						</p>
+						<p class="hero-desc">
+							&nbsp;&nbsp;&nbsp;&nbsp;—— 『{
+								MISAKA_PROFILE.slogan
+							}』
+						</p>
+					</div>
+
+					<div class="hero-actions">
+						<a href="/blog" class="btn-electric">
+							<span>⚡ 进入文章档案</span>
+							<span class="btn-count">{allPosts.length}</span>
+						</a>
+						<button
+							type="button"
+							class="btn-coin js-railgun-trigger"
+						>
+							<span>🪙 抛起硬币 · 超电磁炮</span>
+						</button>
+						<a href="/about" class="btn-gekota">
+							<img
+								src="/favicon.svg"
+								alt="Gekota"
+								width="18"
+								height="18"
+							/>
+							<span>关于能力者</span>
+						</a>
+					</div>
+				</div>
+			</section>
+
+			<!-- Level 5 Esper Status Strip -->
+			<section class="status-grid" aria-label="Level 5 能力者参数面板">
+				<div class="status-item hud-card">
+					<span class="status-label">ABILITY // 超能力</span>
+					<strong class="status-value">电击使 (Electro Master)</strong
+					>
+					<span class="status-sub">代号：超电磁炮 (Railgun)</span>
+				</div>
+				<div class="status-item hud-card">
+					<span class="status-label">OUTPUT // 最大电压</span>
+					<strong class="status-value status-gold"
+						>1,000,000,000 V</strong
+					>
+					<span class="status-sub">硬币初速 1030 m/s · 3倍音速</span>
+				</div>
+				<div class="status-item hud-card">
+					<span class="status-label">TECH STACK // 技术回路</span>
+					<strong class="status-value">Astro · TypeScript</strong>
+					<span class="status-sub">全栈折腾与效率工具控</span>
+				</div>
+				<div class="status-item hud-card">
+					<span class="status-label">FAVORITE // 秘密信仰</span>
+					<strong class="status-value status-green"
+						>呱太 (Gekota) 🐸</strong
+					>
+					<span class="status-sub">常盘台扭蛋机狂热爱好者</span>
+				</div>
+			</section>
+
+			<!-- Latest Blog Posts Section -->
+			<section class="latest-section">
+				<div class="section-header">
+					<div>
+						<span class="section-kicker"
+							>LATEST LOGS // 最新电磁观测记录</span
+						>
+						<h2>近期文章</h2>
+					</div>
+					<a href="/blog" class="view-all-link">
+						查看全部 ({allPosts.length}) →
+					</a>
+				</div>
+
+				<div class="post-grid">
+					{
+						recentPosts.map((post, idx) => {
+							const serialNo = String(
+								allPosts.length - idx,
+							).padStart(3, "0");
+							return (
+								<article class="post-card hud-card">
+									<a
+										href={`/blog/${post.id}/`}
+										class="post-card-link"
+									>
+										<div class="post-card-top">
+											<span class="post-serial">
+												⚡ LOG #{serialNo}
+											</span>
+											<span class="post-date">
+												<FormattedDate
+													date={post.data.updatedDate ?? post.data.pubDate}
+												/>
+											</span>
+										</div>
+
+										<h3 class="post-title">
+											{post.data.title}
+										</h3>
+
+										{post.data.description && (
+											<p class="post-excerpt">
+												{post.data.description}
+											</p>
+										)}
+
+										<div class="post-card-footer">
+											<div class="post-tags">
+												{post.data.tags &&
+												post.data.tags.length > 0 ? (
+													post.data.tags.map(
+														(tag) => (
+															<span class="hud-tag">
+																#{tag}
+															</span>
+														),
+													)
+												) : (
+													<span class="hud-tag">
+														#note
+													</span>
+												)}
+											</div>
+											<span class="read-more">
+												READ ⚡
+											</span>
+										</div>
+									</a>
+								</article>
+							);
+						})
+					}
+				</div>
+			</section>
 		</main>
 		<Footer />
 	</body>
 </html>
+
+<style>
+	.hero-section {
+		padding: 0;
+		margin-bottom: 2rem;
+	}
+
+	.hero-hud-bar {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		padding: 0.65rem 1.1rem;
+		background: var(--bg-inline-code);
+		border-bottom: 1px solid var(--border-hud);
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.75rem;
+	}
+
+	.hud-dots {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+	}
+
+	.dot {
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		display: inline-block;
+	}
+	.dot-cyan {
+		background: var(--accent);
+		box-shadow: 0 0 8px var(--accent);
+	}
+	.dot-gold {
+		background: var(--accent-coin);
+		box-shadow: 0 0 8px var(--accent-coin);
+	}
+	.dot-green {
+		background: var(--accent-gekota);
+		box-shadow: 0 0 8px var(--accent-gekota);
+	}
+
+	.hud-sys-text {
+		margin-left: 0.35rem;
+		color: var(--accent);
+		letter-spacing: 0.06em;
+		font-weight: 700;
+	}
+
+	.hud-status-right {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.hero-banner-wrap {
+		position: relative;
+		margin: 1rem 1rem 0;
+		border-radius: 10px;
+		overflow: hidden;
+		border: 1px solid var(--border-hud);
+	}
+
+	.hero-banner-img {
+		display: block;
+		width: 100%;
+		height: auto;
+		border-radius: 0;
+		transition: transform 0.5s ease;
+	}
+
+	.hero-section:hover .hero-banner-img {
+		transform: scale(1.012);
+	}
+
+	.hero-corner {
+		position: absolute;
+		width: 18px;
+		height: 18px;
+		border-color: var(--accent);
+		border-style: solid;
+		pointer-events: none;
+	}
+	.corner-tl {
+		top: 10px;
+		left: 10px;
+		border-width: 2px 0 0 2px;
+	}
+	.corner-tr {
+		top: 10px;
+		right: 10px;
+		border-width: 2px 2px 0 0;
+	}
+	.corner-bl {
+		bottom: 10px;
+		left: 10px;
+		border-width: 0 0 2px 2px;
+	}
+	.corner-br {
+		bottom: 10px;
+		right: 10px;
+		border-width: 0 2px 2px 0;
+	}
+
+	.hero-content {
+		padding: 1.5rem 1.5rem 1.75rem;
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 1.25rem;
+	}
+
+	.hero-text {
+		flex: 1 1 420px;
+	}
+
+	.hero-kicker {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		margin: 0 0 0.4rem;
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.76rem;
+		letter-spacing: 0.08em;
+		color: var(--accent);
+	}
+
+	.kicker-sep {
+		color: var(--accent-coin);
+	}
+
+	.hero-content h1 {
+		margin: 0 0 0.4rem;
+		font-size: 2rem;
+	}
+
+	.hero-desc {
+		margin: 0;
+		color: var(--text-secondary);
+		font-size: 1rem;
+	}
+
+	.hero-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.7rem;
+	}
+
+	.btn-electric,
+	.btn-coin,
+	.btn-gekota {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.65rem 1.1rem;
+		border-radius: 10px;
+		font-family: inherit;
+		font-size: 0.9rem;
+		font-weight: 700;
+		cursor: pointer;
+		text-decoration: none;
+		transition: all 0.2s ease;
+	}
+
+	.btn-electric {
+		background: linear-gradient(135deg, var(--accent), var(--accent-blue));
+		color: #ffffff;
+		border: 1px solid transparent;
+		box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3);
+	}
+	.btn-electric:hover {
+		color: #ffffff;
+		transform: translateY(-2px);
+		box-shadow: 0 6px 24px rgba(0, 229, 255, 0.5);
+		text-shadow: none;
+	}
+
+	.btn-count {
+		padding: 0.05rem 0.45rem;
+		border-radius: 999px;
+		background: rgba(0, 0, 0, 0.25);
+		font-size: 0.78rem;
+		font-family: "JetBrains Mono", Consolas, monospace;
+	}
+
+	.btn-coin {
+		background: var(--accent-coin-soft);
+		color: var(--accent-coin);
+		border: 1px solid rgba(251, 191, 36, 0.45);
+	}
+	.btn-coin:hover {
+		transform: translateY(-2px);
+		box-shadow: var(--glow-coin);
+		border-color: var(--accent-coin);
+	}
+
+	.btn-gekota {
+		background: var(--accent-gekota-soft);
+		color: var(--accent-gekota);
+		border: 1px solid rgba(74, 222, 128, 0.4);
+	}
+	.btn-gekota img {
+		border-radius: 0;
+	}
+	.btn-gekota:hover {
+		color: var(--accent-gekota);
+		transform: translateY(-2px);
+		border-color: var(--accent-gekota);
+		text-shadow: none;
+	}
+
+	/* Status Strip */
+	.status-grid {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 1rem;
+		margin-bottom: 2.75rem;
+	}
+
+	.status-item {
+		padding: 1rem 1.15rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.status-label {
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.68rem;
+		letter-spacing: 0.08em;
+		color: var(--text-muted);
+	}
+
+	.status-value {
+		font-size: 1.05rem;
+		color: var(--accent);
+	}
+	.status-gold {
+		color: var(--accent-coin);
+	}
+	.status-green {
+		color: var(--accent-gekota);
+	}
+
+	.status-sub {
+		font-size: 0.8rem;
+		color: var(--text-secondary);
+	}
+
+	/* Latest Posts Section */
+	.section-header {
+		display: flex;
+		align-items: flex-end;
+		justify-content: space-between;
+		margin-bottom: 1.25rem;
+		gap: 1rem;
+	}
+
+	.section-kicker {
+		display: block;
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.74rem;
+		letter-spacing: 0.08em;
+		color: var(--accent);
+		margin-bottom: 0.2rem;
+	}
+
+	.section-header h2 {
+		margin: 0;
+	}
+
+	.view-all-link {
+		font-weight: 700;
+		font-size: 0.92rem;
+		padding: 0.4rem 0.85rem;
+		border-radius: 8px;
+		border: 1px solid var(--border-hud);
+		background: var(--bg-inline-code);
+	}
+
+	.post-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 1.15rem;
+	}
+
+	.post-card {
+		display: flex;
+	}
+
+	.post-card:hover {
+		transform: translateY(-4px);
+	}
+
+	.post-card-link {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		width: 100%;
+		padding: 1.25rem 1.35rem;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	.post-card-link:hover {
+		text-shadow: none;
+	}
+
+	.post-card-top {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: 0.6rem;
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.76rem;
+	}
+
+	.post-serial {
+		color: var(--accent-coin);
+		font-weight: 700;
+	}
+
+	.post-date {
+		color: var(--text-muted);
+	}
+
+	.post-title {
+		margin: 0 0 0.5rem;
+		font-size: 1.22rem;
+		color: var(--text-primary);
+		transition: color 0.2s ease;
+	}
+
+	.post-card:hover .post-title {
+		color: var(--accent);
+	}
+
+	.post-excerpt {
+		margin: 0 0 1rem;
+		font-size: 0.9rem;
+		color: var(--text-secondary);
+		line-height: 1.55;
+	}
+
+	.post-card-footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		margin-top: auto;
+		padding-top: 0.75rem;
+		border-top: 1px dashed var(--border-subtle);
+	}
+
+	.post-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.35rem;
+	}
+
+	.read-more {
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.75rem;
+		font-weight: 700;
+		color: var(--accent);
+		white-space: nowrap;
+	}
+
+	@media (max-width: 900px) {
+		.status-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 720px) {
+		.hud-sys-text {
+			display: none;
+		}
+		.hero-banner-wrap {
+			margin: 0.65rem 0.65rem 0;
+		}
+		.hero-content {
+			padding: 1.15rem 1rem 1.35rem;
+		}
+		.hero-content h1 {
+			font-size: 1.55rem;
+		}
+		.status-grid {
+			grid-template-columns: 1fr;
+			gap: 0.75rem;
+		}
+		.post-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

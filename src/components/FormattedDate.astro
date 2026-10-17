@@ -1,17 +1,44 @@
 ---
 interface Props {
-	date: Date;
+	date: Date | string;
+	format?: string;
 }
 
-const { date } = Astro.props;
+const { date, format = "yyyy-MM-dd" } = Astro.props;
+
+const d = date instanceof Date ? date : new Date(date);
+
+function formatDate(dateObj: Date, fmt: string): string {
+	const year = dateObj.getFullYear();
+	const month = dateObj.getMonth() + 1;
+	const day = dateObj.getDate();
+	const hours = dateObj.getHours();
+	const minutes = dateObj.getMinutes();
+	const seconds = dateObj.getSeconds();
+
+	const pad = (n: number) => n.toString().padStart(2, "0");
+
+	const map: Record<string, string> = {
+		yyyy: year.toString(),
+		yy: year.toString().slice(-2),
+		MM: pad(month),
+		M: month.toString(),
+		dd: pad(day),
+		d: day.toString(),
+		HH: pad(hours),
+		H: hours.toString(),
+		hh: pad(hours % 12 || 12),
+		h: (hours % 12 || 12).toString(),
+		mm: pad(minutes),
+		m: minutes.toString(),
+		ss: pad(seconds),
+		s: seconds.toString(),
+	};
+
+	return fmt.replace(/yyyy|yy|MM|M|dd|d|HH|H|hh|h|mm|m|ss|s/g, (match) => map[match]);
+}
 ---
 
-<time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString("zh-cn", {
-			year: "numeric",
-			month: "short",
-			day: "numeric",
-		})
-	}
+<time datetime={d.toISOString()}>
+	{formatDate(d, format)}
 </time>

@@ -1,0 +1,405 @@
+---
+import { MISAKA_QUOTES } from "../consts";
+---
+
+<!-- Railgun Beam Overlay -->
+<div id="railgun-beam-layer" class="railgun-beam-layer" aria-hidden="true"></div>
+
+<!-- HUD Toast Notification for Coin Toss / Railgun Fire -->
+<div id="railgun-toast" class="railgun-toast" role="status" aria-live="polite" hidden>
+	<div class="toast-header">
+		<span class="toast-badge" id="railgun-toast-side">⚡ RAILGUN // LEVEL 5</span>
+		<span class="toast-metrics" id="railgun-toast-metrics">1030 m/s · 1.0×10⁹ V</span>
+	</div>
+	<p class="toast-quote" id="railgun-toast-quote"></p>
+</div>
+
+<!-- Floating Arcade Coin Launcher -->
+<button
+	id="railgun-coin-btn"
+	class="railgun-coin-fab js-railgun-trigger"
+	type="button"
+	title="抛起游戏币 · 发射超电磁炮 (Railgun Coin Flip)"
+	aria-label="抛起游戏币 · 发射超电磁炮"
+>
+	<span class="coin-aura"></span>
+	<span class="coin-disc" id="railgun-coin-disc">
+		<!-- Custom Tokiwadai Arcade Coin SVG -->
+		<svg viewBox="0 0 64 64" width="32" height="32" aria-hidden="true">
+			<defs>
+				<radialGradient id="coinGold" cx="35%" cy="30%" r="70%">
+					<stop offset="0%" stop-color="#fef08a" />
+					<stop offset="55%" stop-color="#f59e0b" />
+					<stop offset="100%" stop-color="#b45309" />
+				</radialGradient>
+			</defs>
+			<circle cx="32" cy="32" r="28" fill="url(#coinGold)" stroke="#fef08a" stroke-width="2.5" />
+			<circle cx="32" cy="32" r="22" fill="none" stroke="#78350f" stroke-width="1.5" stroke-dasharray="4 3" />
+			<!-- Lightning Emblem inside Arcade Coin -->
+			<path
+				d="M35 14 L21 34 H31 L28 50 L43 29 H33 Z"
+				fill="#fef9c3"
+				stroke="#92400e"
+				stroke-width="1.5"
+				stroke-linejoin="round"
+			/>
+		</svg>
+	</span>
+	<span class="coin-label">
+		<span class="coin-title">COIN // RAILGUN</span>
+		<span class="coin-sub" id="railgun-shot-count">⚡ READY</span>
+	</span>
+</button>
+
+<script define:vars={{ MISAKA_QUOTES }}>
+	(function () {
+		const beamLayer = document.getElementById("railgun-beam-layer");
+		const toast = document.getElementById("railgun-toast");
+		const toastSide = document.getElementById("railgun-toast-side");
+		const toastMetrics = document.getElementById("railgun-toast-metrics");
+		const toastQuote = document.getElementById("railgun-toast-quote");
+		const coinDisc = document.getElementById("railgun-coin-disc");
+		const shotCountEl = document.getElementById("railgun-shot-count");
+
+		let toastTimer = null;
+		let shots = Number(sessionStorage.getItem("misaka-railgun-shots") || "0");
+		if (shots > 0 && shotCountEl) {
+			shotCountEl.textContent = `⚡ SHOT #${String(shots).padStart(2, "0")}`;
+		}
+
+		function fireRailgun(originX, originY) {
+			shots += 1;
+			sessionStorage.setItem("misaka-railgun-shots", String(shots));
+			if (shotCountEl) {
+				shotCountEl.textContent = `⚡ SHOT #${String(shots).padStart(2, "0")}`;
+			}
+
+			// 1. Animate coin flip
+			if (coinDisc) {
+				coinDisc.classList.remove("is-flipping");
+				void coinDisc.offsetWidth;
+				coinDisc.classList.add("is-flipping");
+			}
+
+			// 2. Spawn electromagnetic railgun beam across viewport
+			if (beamLayer) {
+				const beam = document.createElement("div");
+				beam.className = "railgun-beam-shot";
+				const startY = typeof originY === "number" ? originY : window.innerHeight * 0.65;
+				beam.style.top = `${Math.max(80, Math.min(window.innerHeight - 80, startY))}px`;
+				beamLayer.appendChild(beam);
+				setTimeout(() => beam.remove(), 750);
+			}
+
+			// 3. Spawn burst of electric arcs at origin
+			if (typeof originX === "number" && typeof originY === "number") {
+				spawnElectricSparks(originX, originY, 12);
+			}
+
+			// 4. Show HUD Toast with coin result & random Misaka quote
+			if (toast && toastSide && toastMetrics && toastQuote) {
+				const isHeads = Math.random() >= 0.5;
+				const quote = MISAKA_QUOTES[Math.floor(Math.random() * MISAKA_QUOTES.length)];
+				const velocity = (1028 + Math.floor(Math.random() * 12)).toString();
+				toastSide.textContent = isHeads
+					? "🪙 COIN: HEADS (正面) // RAILGUN FIRED"
+					: "🪙 COIN: TAILS (反面) // RAILGUN FIRED";
+				toastMetrics.textContent = `${velocity} m/s · 1.0×10⁹ V · #${String(shots).padStart(2, "0")}`;
+				toastQuote.textContent = `「${quote}」`;
+
+				toast.hidden = false;
+				toast.classList.add("is-visible");
+				if (toastTimer) clearTimeout(toastTimer);
+				toastTimer = setTimeout(() => {
+					toast.classList.remove("is-visible");
+					setTimeout(() => {
+						if (!toast.classList.contains("is-visible")) {
+							toast.hidden = true;
+						}
+					}, 300);
+				}, 4200);
+			}
+		}
+
+		// Attach click listener to all .js-railgun-trigger buttons
+		document.addEventListener("click", (e) => {
+			const target = e.target instanceof Element ? e.target : null;
+			if (!target) return;
+
+			const trigger = target.closest(".js-railgun-trigger");
+			if (trigger) {
+				const rect = trigger.getBoundingClientRect();
+				const cx = e.clientX || rect.left + rect.width / 2;
+				const cy = e.clientY || rect.top + rect.height / 2;
+				fireRailgun(cx, cy);
+				return;
+			}
+
+			// Subtle fingertip electric spark on any click
+			if (e.clientX && e.clientY) {
+				spawnElectricSparks(e.clientX, e.clientY, 5);
+			}
+		});
+
+		function spawnElectricSparks(x, y, count) {
+			const container = document.createElement("div");
+			container.className = "electric-spark-burst";
+			container.style.left = `${x}px`;
+			container.style.top = `${y}px`;
+
+			for (let i = 0; i < count; i++) {
+				const spark = document.createElement("span");
+				spark.className = "electric-spark-line";
+				const angle = (360 / count) * i + (Math.random() * 28 - 14);
+				const distance = 18 + Math.random() * (count > 6 ? 46 : 22);
+				const isGold = i % 4 === 0;
+				spark.style.setProperty("--angle", `${angle}deg`);
+				spark.style.setProperty("--dist", `${distance}px`);
+				if (isGold) {
+					spark.classList.add("is-gold");
+				}
+				container.appendChild(spark);
+			}
+
+			document.body.appendChild(container);
+			setTimeout(() => container.remove(), 460);
+		}
+	})();
+</script>
+
+<style is:global>
+	/* Floating Arcade Coin Button */
+	.railgun-coin-fab {
+		position: fixed;
+		right: 1.4rem;
+		bottom: 1.4rem;
+		z-index: 90;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.6rem;
+		padding: 0.45rem 0.9rem 0.45rem 0.5rem;
+		border-radius: 999px;
+		background: var(--bg-glass);
+		border: 1px solid var(--border-hud-strong);
+		box-shadow: var(--glow-electric);
+		color: var(--text-primary);
+		cursor: pointer;
+		backdrop-filter: blur(12px);
+		transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+		font-family: inherit;
+	}
+
+	.railgun-coin-fab:hover {
+		transform: translateY(-3px) scale(1.03);
+		border-color: var(--accent-coin);
+		box-shadow: var(--glow-coin), var(--glow-electric);
+	}
+
+	.railgun-coin-fab:active {
+		transform: translateY(0) scale(0.97);
+	}
+
+	.coin-disc {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 34px;
+		height: 34px;
+		border-radius: 50%;
+		filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.55));
+	}
+
+	.coin-disc.is-flipping {
+		animation: coinTossSpin 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+	}
+
+	@keyframes coinTossSpin {
+		0% {
+			transform: translateY(0) rotateY(0deg) scale(1);
+		}
+		45% {
+			transform: translateY(-26px) rotateY(540deg) scale(1.22);
+		}
+		100% {
+			transform: translateY(0) rotateY(1080deg) scale(1);
+		}
+	}
+
+	.coin-label {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		line-height: 1.15;
+	}
+
+	.coin-title {
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		color: var(--accent-coin);
+	}
+
+	.coin-sub {
+		font-size: 0.72rem;
+		font-family: "JetBrains Mono", Consolas, monospace;
+		color: var(--accent);
+	}
+
+	/* HUD Toast Notification */
+	.railgun-toast {
+		position: fixed;
+		right: 1.4rem;
+		bottom: 8.8rem;
+		z-index: 95;
+		width: min(380px, calc(100vw - 2rem));
+		padding: 0.9rem 1.1rem;
+		border-radius: 12px;
+		background: var(--bg-glass);
+		border: 1px solid var(--border-hud-strong);
+		box-shadow: var(--glow-electric), 0 12px 32px rgba(0, 0, 0, 0.45);
+		backdrop-filter: blur(14px);
+		opacity: 0;
+		transform: translateY(12px) scale(0.97);
+		transition: opacity 0.25s ease, transform 0.25s ease;
+		pointer-events: none;
+	}
+
+	.railgun-toast.is-visible {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+
+	.railgun-toast::before {
+		content: "";
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: linear-gradient(90deg, var(--accent), var(--accent-coin), var(--accent));
+	}
+
+	.toast-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.5rem;
+		margin-bottom: 0.4rem;
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.72rem;
+	}
+
+	.toast-badge {
+		color: var(--accent-coin);
+		font-weight: 700;
+	}
+
+	.toast-metrics {
+		color: var(--accent);
+	}
+
+	.toast-quote {
+		margin: 0;
+		font-size: 0.9rem;
+		line-height: 1.5;
+		color: var(--text-primary);
+	}
+
+	/* Railgun Beam Overlay */
+	.railgun-beam-layer {
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		z-index: 88;
+		overflow: hidden;
+	}
+
+	.railgun-beam-shot {
+		position: absolute;
+		left: -10%;
+		width: 120%;
+		height: 6px;
+		background: linear-gradient(90deg, transparent 0%, #00e5ff 20%, #ffffff 50%, #fbbf24 80%, transparent 100%);
+		box-shadow:
+			0 0 16px #00e5ff,
+			0 0 32px #3b82f6,
+			0 0 48px #fbbf24;
+		transform: rotate(-4deg) scaleX(0);
+		transform-origin: right center;
+		animation: railgunBeamStrike 0.68s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	@keyframes railgunBeamStrike {
+		0% {
+			opacity: 1;
+			transform: rotate(-4deg) scaleX(0);
+		}
+		30% {
+			opacity: 1;
+			transform: rotate(-4deg) scaleX(1);
+			height: 10px;
+		}
+		100% {
+			opacity: 0;
+			transform: rotate(-4deg) scaleX(1.05);
+			height: 1px;
+		}
+	}
+
+	/* Fingertip Electric Spark Particles */
+	.electric-spark-burst {
+		position: fixed;
+		width: 0;
+		height: 0;
+		pointer-events: none;
+		z-index: 9999;
+	}
+
+	.electric-spark-line {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 12px;
+		height: 2px;
+		border-radius: 2px;
+		background: #00e5ff;
+		box-shadow: 0 0 8px #00e5ff, 0 0 14px #3b82f6;
+		transform-origin: left center;
+		animation: sparkShoot 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	.electric-spark-line.is-gold {
+		background: #fbbf24;
+		box-shadow: 0 0 8px #fbbf24, 0 0 14px #f59e0b;
+	}
+
+	@keyframes sparkShoot {
+		0% {
+			opacity: 1;
+			transform: rotate(var(--angle)) translateX(2px) scaleX(0.4);
+		}
+		50% {
+			opacity: 1;
+			transform: rotate(var(--angle)) translateX(calc(var(--dist) * 0.6)) scaleX(1.1);
+		}
+		100% {
+			opacity: 0;
+			transform: rotate(var(--angle)) translateX(var(--dist)) scaleX(0.1);
+		}
+	}
+
+	@media (max-width: 720px) {
+		.railgun-coin-fab {
+			right: 0.9rem;
+			bottom: 0.9rem;
+			padding: 0.4rem 0.65rem 0.4rem 0.4rem;
+		}
+		.coin-title {
+			display: none;
+		}
+		.railgun-toast {
+			right: 0.9rem;
+			bottom: 7.8rem;
+		}
+	}
+</style>

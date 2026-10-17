@@ -1,6 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import BackToTop from '../components/BackToTop.astro';
 import BaseHead from '../components/BaseHead.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
@@ -8,49 +9,166 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, tags } = Astro.props;
 ---
 
-<html lang="en">
+<!doctype html>
+<html lang="zh-CN">
 	<head>
-		<BaseHead title={title} description={description} />
+		<BaseHead title={title} description={description} image={heroImage} />
 		<style>
 			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
+				width: 900px;
+				max-width: calc(100% - 1.5rem);
+				margin: 0 auto;
+				padding: 2rem 0 4rem;
 			}
+
+			.article-shell {
+				padding: 0;
+			}
+
+			.article-shell:hover {
+				box-shadow: var(--shadow-card);
+			}
+
+			.article-hud-bar {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				flex-wrap: wrap;
+				gap: 0.5rem;
+				padding: 0.7rem 1.25rem;
+				background: var(--bg-inline-code);
+				border-bottom: 1px solid var(--border-hud);
+				font-family: "JetBrains Mono", Consolas, monospace;
+				font-size: 0.75rem;
+			}
+
+			.hud-back-link {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.35rem;
+				color: var(--accent);
+				font-weight: 700;
+				text-decoration: none;
+			}
+
+			.hud-back-link:hover {
+				color: var(--accent-coin);
+			}
+
+			.hud-bar-status {
+				color: var(--text-muted);
+				letter-spacing: 0.06em;
+			}
+
 			.hero-image {
-				width: 100%;
+				position: relative;
+				margin: 1.25rem 1.25rem 0;
+				border-radius: 10px;
+				overflow: hidden;
+				border: 1px solid var(--border-hud);
 			}
+
 			.hero-image img {
 				display: block;
+				width: 100%;
+				height: auto;
 				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+				border-radius: 0;
 			}
+
 			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
+				width: 760px;
+				max-width: 100%;
+				margin: 0 auto;
+				padding: 2rem 1.75rem 2.25rem;
+				color: var(--text-primary);
 			}
+
 			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
+				margin-bottom: 1.5rem;
 				text-align: center;
-				line-height: 1;
+				line-height: 1.25;
 			}
+
 			.title h1 {
-				margin: 0 0 0.5em 0;
+				margin: 0.4rem 0 0.65rem;
+				font-size: 2.15rem;
 			}
+
 			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+				display: inline-flex;
+				align-items: center;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.6rem;
+				margin-bottom: 0.35rem;
+				font-family: "JetBrains Mono", Consolas, monospace;
+				font-size: 0.82rem;
+				color: var(--accent);
 			}
+
 			.last-updated-on {
 				font-style: italic;
+				color: var(--text-muted);
+			}
+
+			.post-tags {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.4rem;
+				margin-top: 0.65rem;
+			}
+
+			.article-footer-bar {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				flex-wrap: wrap;
+				gap: 0.75rem;
+				padding: 1rem 1.75rem;
+				border-top: 1px dashed var(--border-hud);
+				background: var(--bg-inline-code);
+				font-size: 0.88rem;
+			}
+
+			.coin-cheer-btn {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.45rem;
+				padding: 0.4rem 0.9rem;
+				border-radius: 999px;
+				background: var(--accent-coin-soft);
+				border: 1px solid rgba(251, 191, 36, 0.45);
+				color: var(--accent-coin);
+				font-family: inherit;
+				font-size: 0.82rem;
+				font-weight: 700;
+				cursor: pointer;
+				transition: all 0.2s ease;
+			}
+
+			.coin-cheer-btn:hover {
+				box-shadow: var(--glow-coin);
+				transform: translateY(-2px);
+			}
+
+			@media (max-width: 720px) {
+				.hero-image {
+					margin: 0.75rem 0.75rem 0;
+				}
+				.prose {
+					padding: 1.35rem 1.1rem 1.75rem;
+				}
+				.title h1 {
+					font-size: 1.65rem;
+				}
+				.article-footer-bar {
+					padding: 0.85rem 1.1rem;
+				}
 			}
 		</style>
 	</head>
@@ -58,27 +176,56 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 	<body>
 		<Header />
 		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
+			<article class="article-shell hud-card">
+				<div class="article-hud-bar">
+					<a href="/blog" class="hud-back-link">← ARCHIVE // 返回文章列表</a>
+					<span class="hud-bar-status">⚡ LEVEL 5 READING TERMINAL</span>
 				</div>
+
+				{
+					heroImage && (
+						<div class="hero-image">
+							<Image width={1200} height={675} src={heroImage} alt={title} />
+						</div>
+					)
+				}
+
 				<div class="prose">
 					<div class="title">
 						<div class="date">
-							<FormattedDate date={pubDate} />
-							{updatedDate && (
-								<div class="last-updated-on">
-									Last updated on <FormattedDate date={updatedDate} />
-								</div>
-							)}
+							<span>⚡ <FormattedDate date={pubDate} /></span>
+							{
+								updatedDate && (
+									<span class="last-updated-on">
+										(Updated: <FormattedDate date={updatedDate} />)
+									</span>
+								)
+							}
 						</div>
 						<h1>{title}</h1>
+						{
+							tags && tags.length > 0 && (
+								<div class="post-tags">
+									{tags.map((tag) => (
+										<span class="hud-tag">#{tag}</span>
+									))}
+								</div>
+							)
+						}
 						<hr />
 					</div>
 					<slot />
 				</div>
+
+				<div class="article-footer-bar">
+					<a href="/blog" class="hud-back-link">← 返回全部文章</a>
+					<button type="button" class="coin-cheer-btn js-railgun-trigger">
+						🪙 投币充能 · 发射超电磁炮
+					</button>
+				</div>
 			</article>
 		</main>
+		<BackToTop />
 		<Footer />
 	</body>
 </html>

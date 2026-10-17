@@ -6,10 +6,36 @@ import Layout from "../layouts/BlogPost.astro";
 <Layout
 	title="About Me"
 	description="一个喜欢二次元的程序员"
-	pubDate={new Date("2026-10-18")}
-	updatedDate={new Date("2026-10-18")}
+	pubDate={new Date("2026-10-17")}
+	updatedDate={new Date("2026-10-17")}
 	heroImage={AboutHeroImage}
+	tags={["misaka", "railgun", "astro", "profile"]}
 >
+	<div class="esper-dossier">
+		<div class="dossier-header">
+			<span>⚡ ACADEMY CITY // ESPER DOSSIER · RANK 3</span>
+			<span class="hud-badge-gekota">🐸 GEKOTA FAN</span>
+		</div>
+		<div class="dossier-grid">
+			<div class="dossier-cell">
+				<span class="cell-label">ID // 博主代号</span>
+				<strong class="cell-val">Ecator</strong>
+			</div>
+			<div class="dossier-cell">
+				<span class="cell-label">DOMAIN // 电磁领域</span>
+				<strong class="cell-val">blog.misaka.cool</strong>
+			</div>
+			<div class="dossier-cell">
+				<span class="cell-label">ABILITY // 能力方向</span>
+				<strong class="cell-val">Full-Stack & 折腾笔记</strong>
+			</div>
+			<div class="dossier-cell">
+				<span class="cell-label">STATUS // 当前状态</span>
+				<strong class="cell-val cell-online">⚡ 持续发电写作中</strong>
+			</div>
+		</div>
+	</div>
+
 	<p>
 		在AI的帮助下，重新基于<a href="https://astro.build/">Astro</a>
 		对个人博客进行了翻修，因为之前的域名到期了，刚好手头还有一个
@@ -21,4 +47,66 @@ import Layout from "../layouts/BlogPost.astro";
 		入坑语言，后来也接触过很多语言，工作也一直从事IT行业，摸爬滚打多年，
 		在这个博客创立之初就是想写点什么，但不知什么原因中间断了几年，最近准备重新开始写作，也希望自己能够坚持下去。
 	</p>
+
+	<blockquote>
+		「追逐雷电与代码，这就是我的正义。」—— 欢迎常来我的数字秘密基地串门 ⚡
+	</blockquote>
 </Layout>
+
+<style>
+	.esper-dossier {
+		margin: 0 0 1.75rem;
+		padding: 1rem 1.2rem;
+		border-radius: 10px;
+		background: var(--bg-inline-code);
+		border: 1px solid var(--border-hud);
+	}
+
+	.dossier-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		padding-bottom: 0.75rem;
+		margin-bottom: 0.85rem;
+		border-bottom: 1px dashed var(--border-hud);
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.76rem;
+		color: var(--accent);
+		font-weight: 700;
+	}
+
+	.dossier-grid {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: 0.85rem;
+	}
+
+	.dossier-cell {
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
+	}
+
+	.cell-label {
+		font-family: "JetBrains Mono", Consolas, monospace;
+		font-size: 0.68rem;
+		color: var(--text-muted);
+	}
+
+	.cell-val {
+		font-size: 0.96rem;
+		color: var(--text-primary);
+	}
+
+	.cell-online {
+		color: var(--accent-coin);
+	}
+
+	@media (max-width: 600px) {
+		.dossier-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>
