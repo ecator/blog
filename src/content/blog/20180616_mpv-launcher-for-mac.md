@@ -4,6 +4,7 @@ description: 基于Automator的mpv启动器
 pubDate: "2018-06-16"
 updatedDate: "2018-06-16"
 tags: ["mac"]
+heroImage: "./_assets/20180616_mpv-launcher-for-mac-install-0.png"
 ---
 
 mpv是一个全平台的视频播放器，我的主力电脑是mac，在知道mpv之前一直用迅雷的一款叫Xplayer的播放器，但是功能有限，连最基本快进都没有。在一个偶然的机会遇到了mpv，mpv功能很强大，几乎支持所有格式，但是是一款命令行的播放器，所以每次要播放视频的时候都需要在终端里面敲`mpv 视频1 视频2 ....`这样的命令，看着非常极客，但是实际上非常麻烦，远没有直接鼠标点两下直接播放来得快，所以也是为了方便自己，基于mac的Automator制作了一个mpv的启动器。
@@ -17,17 +18,17 @@ mpv是一个全平台的视频播放器，我的主力电脑是mac，在知道mp
 
 ## mpv启动器
 
-[下载mpv.app.zip](/assets/mpv.app.zip)后把解压后的**mpv.app**移动到访达中的**应用程序**目录，这样你就能在启动台中看到mpv了。
+[下载mpv.app.zip](/downloads/mpv.app.zip)后把解压后的**mpv.app**移动到访达中的**应用程序**目录，这样你就能在启动台中看到mpv了。
 
 
-![移动到应用程序目录](../../assets/blog-mpv-launcher-for-mac-install-0.png)
+![移动到应用程序目录](./_assets/20180616_mpv-launcher-for-mac-install-0.png)
 
 # 使用
 
 不出意外安装成功后右击视频文件在打开选项中就会出现mpv了😀
 > 而且相应文件的图标也变了有木有😉
 
-![打开方式中出现mpv](../../assets/blog-mpv-launcher-for-mac-usage-0.png)
+![打开方式中出现mpv](./_assets/20180616_mpv-launcher-for-mac-usage-0.png)
 
 当然你也可以直接双击文件打开（前提是要设置一下默认打开方式：右键-显示简介-打开方式选择mpv-全部更改）或者在启动台中点击mpv后会直接弹出文件选择对话框。另外也可以一次性选择多个文件打开，mpv会按照文件的顺序依次播放。
 
