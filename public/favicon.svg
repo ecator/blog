@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- 呱太头部整体外形（经典草绿色） -->
+  <g fill="#48c74a" stroke="#2b872d" stroke-width="12" stroke-linejoin="round">
+    <!-- 左眼凸起 -->
+    <circle cx="150" cy="180" r="85" />
+    <!-- 右眼凸起 -->
+    <circle cx="362" cy="180" r="85" />
+    <!-- 圆润下颚与脸颊 -->
+    <rect x="70" y="170" width="372" height="230" rx="115" />
+  </g>
+
+  <!-- 左眼珠（大黑眼球 + 白色高光） -->
+  <circle cx="150" cy="180" r="40" fill="#1e293b" />
+  <circle cx="138" cy="168" r="14" fill="#ffffff" />
+
+  <!-- 右眼珠（大黑眼球 + 白色高光） -->
+  <circle cx="362" cy="180" r="40" fill="#1e293b" />
+  <circle cx="350" cy="168" r="14" fill="#ffffff" />
+
+  <!-- 呱太标志性粉嫩腮红 -->
+  <ellipse cx="115" cy="285" rx="28" ry="16" fill="#f472b6" opacity="0.8" />
+  <ellipse cx="397" cy="285" rx="28" ry="16" fill="#f472b6" opacity="0.8" />
+
+  <!-- 呱太标志性微翘呆萌嘴 -->
+  <path d="M 210 280 Q 256 315 302 280" fill="none" stroke="#1e293b" stroke-width="14" stroke-linecap="round" />
+</svg>

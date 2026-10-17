@@ -1,0 +1,24 @@
+---
+import AboutHeroImage from "../assets/site-about.jpg";
+import Layout from "../layouts/BlogPost.astro";
+---
+
+<Layout
+	title="About Me"
+	description="一个喜欢二次元的程序员"
+	pubDate={new Date("2026-10-18")}
+	updatedDate={new Date("2026-10-18")}
+	heroImage={AboutHeroImage}
+>
+	<p>
+		在AI的帮助下，重新基于<a href="https://astro.build/">Astro</a>
+		对个人博客进行了翻修，因为之前的域名到期了，刚好手头还有一个
+		<code>misaka.cool</code>的域名，就拿来用了。
+	</p>
+
+	<p>
+		从高中开始就接触编程，那个时候还有个叫易语言的中文编程语言，也算是我的
+		入坑语言，后来也接触过很多语言，工作也一直从事IT行业，摸爬滚打多年，
+		在这个博客创立之初就是想写点什么，但不知什么原因中间断了几年，最近准备重新开始写作，也希望自己能够坚持下去。
+	</p>
+</Layout>
