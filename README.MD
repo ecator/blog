@@ -58,15 +58,16 @@ description: "文章简短摘要"
 pubDate: "2026-10-17"
 updatedDate: "2026-10-17" # 可选：更新文章时填写
 tags: ["astro", "linux"]  # 可选：文章分类标签
+heroImage: "./_assets/cover.jpg" # 可选：文章封面头图
 ---
 ```
 
 > **排序规则**：博客文章列表会优先按照 `updatedDate` 降序排列；如果未设置 `updatedDate`，则使用 `pubDate` 降序排列。
 
 ### 2. 图片与附件存放
-- **文章配图**：放入 `src/content/blog/_assets/` 目录，在 Markdown 中使用相对路径引用：
+- **文章配图**：统一放入 `src/content/blog/_assets/` 目录，推荐命名格式为 `<文章前缀>-<描述>.<ext>`，在 Markdown 中使用相对路径引用：
   ```markdown
-  ![图片说明](./_assets/示例图片.png)
+  ![图片说明](./_assets/<文章前缀>-<描述>.png)
   ```
 - **其他附件**（如压缩包、PDF 文档等）：放入 `public/downloads/` 目录，在 Markdown 中使用绝对路径引用：
   ```markdown
